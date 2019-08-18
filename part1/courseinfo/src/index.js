@@ -12,9 +12,9 @@ const Header = (course) => {
 const Content = (content) => {
     return (
         <div>
-            <Part name={content.parts[0].name} exercises={content.parts[0].exercises} />
-            <Part name={content.parts[1].name} exercises={content.parts[1].exercises} />
-            <Part name={content.parts[2].name} exercises={content.parts[2].exercises} />
+            <Part part={content.content[0].name} exercises={content.content[0].exercises}/>
+            <Part part={content.content[1].name} exercises={content.content[1].exercises}/>
+            <Part part={content.content[2].name} exercises={content.content[2].exercises}/>
         </div>
     )
 }
@@ -22,17 +22,16 @@ const Part = (content) => {
     return (
         <div>
             <p>
-                {content.name} {content.exercises}
+                {content.part} {content.exercises}
             </p>
         </div>
     )
 }
 
 const Total = (total) => {
-    console.log(total)
     return (
         <div>
-            <p>Number of exercises {total.parts[0].exercises + total.parts[1].exercises + total.parts[2].exercises} </p>
+            <p>Number of exercises {total.exercises[0].exercises + total.exercises[1].exercises + total.exercises[2].exercises}</p>
         </div>
     )
 }
@@ -59,8 +58,8 @@ const App = () => {
     return (
         <div>
             <Header name={course.name} />
-            <Content parts={course.parts} />
-            <Total parts={course.parts} />
+            <Content content={course.parts} />
+            <Total exercises={course.parts} />
       </div>
     )
 }
