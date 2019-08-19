@@ -17,19 +17,69 @@ const Button = ({onClick, text}) => {
   )
 }
 
-const Statistics = ({type, text}) => {
-  return (
-    <div>{text} {type}</div>
+const Statistics = (bundle) => {
+  var isEmpty = true;
+  for(var i = 0; i < bundle.bundle.length; i++) {
+    if (bundle.bundle[i].count !== 0) isEmpty = false;
+  }
+  if (isEmpty) {
+    return (
+      <div>
+        No feedback given
+      </div>
+    )
+  }
+  else 
+    return (
+      <tbody>
+        <tr><StatisticsParts name={bundle.bundle[0].name} count={bundle.bundle[0].count} /></tr>
+        <tr><StatisticsParts name={bundle.bundle[1].name} count={bundle.bundle[1].count} /></tr>
+        <tr><StatisticsParts name={bundle.bundle[2].name} count={bundle.bundle[2].count} /></tr>
+        <tr><StatisticsParts name={bundle.bundle[3].name} count={bundle.bundle[3].count} /></tr>
+      </tbody>
   )
 }
 
-const AverageScore = ({good, bad, total, text}) => {
-  if (!total) {
-    return <div>{text} 0</div>
+const StatisticsParts = (bundle) => {
+  return (
+    <td>{bundle.name} {bundle.count}</td>
+  )
+}
+
+const AverageScore = (bundle) => {
+  var isEmpty = true;
+  for(var i = 0; i < bundle.bundle.length; i++) {
+    if (bundle.bundle[i].count !== 0) isEmpty = false;
+  }
+  if (isEmpty) {
+    return (
+      <div></div>
+    )
+  }
+  else if (!bundle.bundle[3].count) {
+    return <tr><td>{bundle.bundle[4].name} 0</td></tr>
   }
   else return (
-      <div>{text} {(good*1+bad*-1)/total}</div>
+    <tr><td>{bundle.bundle[4].name}</td><td>{(bundle.bundle[0].count*1+bundle.bundle[2].count*-1) / bundle.bundle[3].count}</td></tr>
     )
+}
+
+const PositiveScore = (bundle) => {
+  var isEmpty = true;
+  for(var i = 0; i < bundle.bundle.length; i++) {
+    if (bundle.bundle[i].count !== 0) isEmpty = false;
+  }
+  if (isEmpty) {
+    return (
+      <tr></tr>
+    )
+  }
+  else if (!bundle.bundle[3].count) {
+    return <div>{bundle.bundle[5].name} 0</div>
+  }
+  else return (
+    <div>{bundle.bundle[5].name} {(bundle.bundle[0].count / bundle.bundle[3].count) * 100} %</div>
+  )
 }
  
 const App = () => {
@@ -39,24 +89,32 @@ const App = () => {
   const [bad, setBad] = useState(0)
   const [total, setTotal] = useState(0)
 
-  const statisticBundle = {
-    bundle: [
-      {
-        name: "good",
-        count: good
-      },
-      {
-        name: "neutral",
-        count: neutral
-      },
-      {
-        name: "bad",
-        count: bad
-      }
-    ]
-  }
-
-  console.log(statisticBundle)
+  const statisticBundle = [
+    {
+      name: "good",
+      count: good
+    },
+    {
+      name: "neutral",
+      count: neutral
+    },
+    {
+      name: "bad",
+      count: bad
+    },
+    {
+      name: "total",
+      count: total
+    },
+    {
+      name: "average",
+      count: 0
+    },
+    {
+      name: "positive",
+      count: 0
+    }
+  ]
 
   const mainTitle = "give feedback"
   const statisticsTitle = "statistics"
@@ -76,6 +134,7 @@ const App = () => {
     setTotal(total + 1)
   }
 
+
   return (
     <div>
       <Header title={mainTitle} />
@@ -83,11 +142,13 @@ const App = () => {
       <Button onClick={handleNeutralClick} text='neutral' />
       <Button onClick={handleBadClick} text='bad' />
       <Header title={statisticsTitle} />
-      <Statistics type={good} text='good'/>
-      <Statistics type={neutral} text='neutral'/>
-      <Statistics type={bad} text='bad'/>
-      <Statistics type={total} text='total'/>
-      <AverageScore good={good} bad={bad} total={total} text="average" />
+      <div>
+        <table>
+            <Statistics bundle={statisticBundle} />
+            <AverageScore bundle={statisticBundle} />
+            <PositiveScore bundle={statisticBundle} />
+        </table>
+      </div>
     </div>
   )
 }
